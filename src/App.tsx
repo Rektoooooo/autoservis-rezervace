@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import { WrenchIcon } from "lucide-react"
 
-import { BookingForm } from "@/components/BookingForm"
+import { BookingForm } from "@/components/booking/BookingForm"
 import { DayOverview } from "@/components/DayOverview"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api, type Mechanic, type Service } from "@/lib/api"
@@ -16,18 +15,8 @@ export default function App() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <header className="mb-6 flex items-center gap-3">
-        <WrenchIcon className="size-7" />
-        <div>
-          <h1 className="text-2xl font-semibold">Autoservis Novák</h1>
-          <p className="text-sm text-muted-foreground">
-            Online rezervace · Po–Pá 8:00–17:00
-          </p>
-        </div>
-      </header>
-
-      <Tabs defaultValue="booking">
+    <main className="mx-auto max-w-6xl px-4 py-8">
+      <Tabs defaultValue="booking" className="gap-6">
         <TabsList>
           <TabsTrigger value="booking">Rezervace</TabsTrigger>
           <TabsTrigger value="overview">Přehled pro servis</TabsTrigger>
@@ -39,6 +28,6 @@ export default function App() {
           <DayOverview services={services} mechanics={mechanics} />
         </TabsContent>
       </Tabs>
-    </div>
+    </main>
   )
 }

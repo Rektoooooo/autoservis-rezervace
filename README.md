@@ -27,7 +27,7 @@ npm run typecheck
 | `server/schedule.ts`  | Which times are still free                        |
 | `server/time.ts`      | Date and time helpers                             |
 | `server/index.ts`     | HTTP API (Hono) with in-memory storage            |
-| `src/components/`     | Booking form and the shop's day overview          |
+| `src/components/`     | Booking form (`booking/`) and the shop day view   |
 | `src/components/ui/`  | shadcn/ui components                              |
 
 Stack: React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Hono.
