@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   api,
+  ApiError,
   type Booking,
   type Customer,
   type Mechanic,
@@ -57,6 +58,11 @@ export function BookingForm({ services, mechanics }: Props) {
     setTime(undefined)
   }
 
+  function chooseTime(time: string) {
+    setTime(time)
+    setError("")
+  }
+
   async function submit(event: FormEvent) {
     event.preventDefault()
     if (!service || !day || !time) return
@@ -70,8 +76,17 @@ export function BookingForm({ services, mechanics }: Props) {
         customer,
       })
       setBooking(created)
-    } catch {
-      setError("Rezervaci se nepodařilo uložit. Zkuste to prosím znovu.")
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        // Someone else booked this time while the customer was filling in the form.
+        setError(
+          `Čas ${time} si mezitím zarezervoval někdo jiný. Nabídku časů jsme obnovili, vyberte prosím jiný.`
+        )
+        setTime(undefined)
+        setTimes(await api.times(service.id, day))
+      } else {
+        setError("Rezervaci se nepodařilo uložit. Zkuste to prosím znovu.")
+      }
     }
   }
 
@@ -127,7 +142,7 @@ export function BookingForm({ services, mechanics }: Props) {
               onDateChange={chooseDate}
               times={times}
               selected={time}
-              onSelect={setTime}
+              onSelect={chooseTime}
             />
           </Section>
 

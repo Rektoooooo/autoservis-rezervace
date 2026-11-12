@@ -1,9 +1,12 @@
-// The shop is in Prague (UTC+2).
-const PRAGUE_UTC_OFFSET = "+02:00"
+import { fromZonedTime } from "date-fns-tz"
 
-/** "2026-11-16" + "10:00" → Date */
+// A time zone name instead of a fixed offset, so summer and winter time
+// are handled automatically (UTC+2 in summer, UTC+1 in winter).
+const SHOP_TIME_ZONE = "Europe/Prague"
+
+/** "2026-11-16" + "10:00" in Prague → Date */
 export function toDate(day: string, time: string): Date {
-  return new Date(`${day}T${time}:00${PRAGUE_UTC_OFFSET}`)
+  return fromZonedTime(`${day}T${time}:00`, SHOP_TIME_ZONE)
 }
 
 export function addMinutes(date: Date, minutes: number): Date {
