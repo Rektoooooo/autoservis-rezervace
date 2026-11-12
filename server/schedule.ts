@@ -1,33 +1,36 @@
-import { CLOSES_AT, MECHANICS, OPENS_AT, SLOT_STEP_MINUTES } from "./config"
+import { CLOSES_AT, MECHANICS, OPENS_AT } from "./config"
 import { addMinutes, isWorkday, minutesToTime, toDate } from "./time"
-import type { Booking, Service, Slot } from "./types"
+import type { Booking, Mechanic, Service } from "./types"
 
-/** Start times on `day` when at least one mechanic is free for the whole service. */
-export function getFreeSlots(
+/** Each mechanic does one kind of service. */
+export function mechanicFor(service: Service): Mechanic {
+  return MECHANICS.find((mechanic) => mechanic.serviceId === service.id)!
+}
+
+/** Start times ("10:00") on `day` when the service's mechanic is free. */
+export function getFreeTimes(
   day: string,
   service: Service,
   bookings: Booking[]
-): Slot[] {
+): string[] {
   if (!isWorkday(day)) return []
 
-  const slots: Slot[] = []
+  const mechanic = mechanicFor(service)
+  const times: string[] = []
 
   for (
     let minutes = OPENS_AT;
     minutes + service.durationMinutes < CLOSES_AT;
-    minutes += SLOT_STEP_MINUTES
+    minutes += service.durationMinutes
   ) {
     const time = minutesToTime(minutes)
     const start = toDate(day, time)
     const end = addMinutes(start, service.durationMinutes)
 
-    const mechanic = MECHANICS.find((m) =>
-      isMechanicFree(m.id, start, end, bookings)
-    )
-    if (mechanic) slots.push({ time, mechanicId: mechanic.id })
+    if (isMechanicFree(mechanic.id, start, end, bookings)) times.push(time)
   }
 
-  return slots
+  return times
 }
 
 function isMechanicFree(

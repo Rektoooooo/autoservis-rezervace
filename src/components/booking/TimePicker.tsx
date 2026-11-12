@@ -3,23 +3,22 @@ import { cs } from "react-day-picker/locale"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import type { Slot } from "@/lib/api"
 import { formatDay } from "@/lib/format"
 
 type Props = {
   hasService: boolean
   date?: Date
   onDateChange: (date?: Date) => void
-  slots: Slot[]
-  selected?: Slot
-  onSelect: (slot: Slot) => void
+  times: string[]
+  selected?: string
+  onSelect: (time: string) => void
 }
 
 export function TimePicker({
   hasService,
   date,
   onDateChange,
-  slots,
+  times,
   selected,
   onSelect,
 }: Props) {
@@ -40,36 +39,36 @@ export function TimePicker({
         </p>
         {!hasService && <Hint>Nejdřív vyberte službu.</Hint>}
         {hasService && date && (
-          <SlotList slots={slots} selected={selected} onSelect={onSelect} />
+          <TimeList times={times} selected={selected} onSelect={onSelect} />
         )}
       </div>
     </div>
   )
 }
 
-function SlotList({
-  slots,
+function TimeList({
+  times,
   selected,
   onSelect,
-}: Pick<Props, "slots" | "selected" | "onSelect">) {
-  if (slots.length === 0) {
+}: Pick<Props, "times" | "selected" | "onSelect">) {
+  if (times.length === 0) {
     return <Hint>Tento den už nemáme volno, zkuste prosím jiný.</Hint>
   }
 
-  const morning = slots.filter((slot) => slot.time < "12:00")
-  const afternoon = slots.filter((slot) => slot.time >= "12:00")
+  const morning = times.filter((time) => time < "12:00")
+  const afternoon = times.filter((time) => time >= "12:00")
 
   return (
     <>
-      <SlotGroup
+      <TimeGroup
         label="Dopoledne"
-        slots={morning}
+        times={morning}
         selected={selected}
         onSelect={onSelect}
       />
-      <SlotGroup
+      <TimeGroup
         label="Odpoledne"
-        slots={afternoon}
+        times={afternoon}
         selected={selected}
         onSelect={onSelect}
       />
@@ -77,13 +76,13 @@ function SlotList({
   )
 }
 
-function SlotGroup({
+function TimeGroup({
   label,
-  slots,
+  times,
   selected,
   onSelect,
-}: { label: string } & Pick<Props, "slots" | "selected" | "onSelect">) {
-  if (slots.length === 0) return null
+}: { label: string } & Pick<Props, "times" | "selected" | "onSelect">) {
+  if (times.length === 0) return null
 
   return (
     <div className="grid gap-2">
@@ -91,15 +90,15 @@ function SlotGroup({
         {label}
       </p>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {slots.map((slot) => (
+        {times.map((time) => (
           <Button
-            key={slot.time}
+            key={time}
             type="button"
-            variant={slot.time === selected?.time ? "default" : "outline"}
+            variant={time === selected ? "default" : "outline"}
             className="h-9 tabular-nums"
-            onClick={() => onSelect(slot)}
+            onClick={() => onSelect(time)}
           >
-            {slot.time}
+            {time}
           </Button>
         ))}
       </div>

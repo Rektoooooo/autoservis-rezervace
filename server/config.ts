@@ -4,8 +4,6 @@ import type { Mechanic, Service } from "./types"
 export const OPENS_AT = 8 * 60 // 8:00
 export const CLOSES_AT = 17 * 60 // 17:00
 
-export const SLOT_STEP_MINUTES = 30
-
 export const SERVICES: Service[] = [
   {
     id: "tyres",
@@ -28,7 +26,7 @@ export const SERVICES: Service[] = [
 ]
 
 export const MECHANICS: Mechanic[] = [
-  { id: "petr", name: "Petr" },
-  { id: "jana", name: "Jana" },
-  { id: "tomas", name: "Tomáš" },
+  { id: "petr", name: "Petr", serviceId: "tyres" },
+  { id: "jana", name: "Jana", serviceId: "inspection" },
+  { id: "tomas", name: "Tomáš", serviceId: "service" },
 ]

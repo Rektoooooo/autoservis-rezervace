@@ -3,7 +3,6 @@ import type {
   BookingRequest,
   Mechanic,
   Service,
-  Slot,
 } from "../../server/types"
 
 export type * from "../../server/types"
@@ -20,8 +19,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   services: () => request<Service[]>("/services"),
   mechanics: () => request<Mechanic[]>("/mechanics"),
-  slots: (serviceId: string, day: string) =>
-    request<Slot[]>(`/slots?serviceId=${serviceId}&day=${day}`),
+  times: (serviceId: string, day: string) =>
+    request<string[]>(`/times?serviceId=${serviceId}&day=${day}`),
   bookings: () => request<Booking[]>("/bookings"),
   createBooking: (body: BookingRequest) =>
     request<Booking>("/bookings", {

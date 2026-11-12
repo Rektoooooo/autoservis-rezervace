@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { SERVICES } from "./config"
-import { getFreeSlots } from "./schedule"
+import { getFreeTimes } from "./schedule"
 import { toDate } from "./time"
 import type { Booking } from "./types"
 
@@ -21,9 +21,9 @@ function booking(mechanicId: string, from: string, to: string): Booking {
 }
 
 const times = (day: string, bookings: Booking[] = []) =>
-  getFreeSlots(day, tyres, bookings).map((slot) => slot.time)
+  getFreeTimes(day, tyres, bookings)
 
-describe("getFreeSlots", () => {
+describe("getFreeTimes", () => {
   it("starts at opening time", () => {
     expect(times(MONDAY)[0]).toBe("08:00")
   })
@@ -32,15 +32,13 @@ describe("getFreeSlots", () => {
     expect(times(SATURDAY)).toEqual([])
   })
 
-  it("hides a time when all mechanics are busy", () => {
-    const allBusy = ["petr", "jana", "tomas"].map((id) =>
-      booking(id, "10:00", "10:30")
-    )
-    expect(times(MONDAY, allBusy)).not.toContain("10:00")
+  it("hides a time when the mechanic is busy", () => {
+    const petrBusy = [booking("petr", "10:30", "11:00")]
+    expect(times(MONDAY, petrBusy)).not.toContain("10:30")
   })
 
-  it("keeps a time when at least one mechanic is free", () => {
-    const twoBusy = ["petr", "jana"].map((id) => booking(id, "10:00", "10:30"))
-    expect(times(MONDAY, twoBusy)).toContain("10:00")
+  it("ignores other mechanics' bookings", () => {
+    const janaBusy = [booking("jana", "10:30", "11:30")]
+    expect(times(MONDAY, janaBusy)).toContain("10:30")
   })
 })

@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button"
-import type { Service, Slot } from "@/lib/api"
+import type { Service } from "@/lib/api"
 import { formatDay } from "@/lib/format"
 
 type Props = {
   service?: Service
   date?: Date
-  slot?: Slot
+  time?: string
   error: string
 }
 
 /** Sticky side panel with the current choices and the submit button. */
-export function BookingSummary({ service, date, slot, error }: Props) {
+export function BookingSummary({ service, date, time, error }: Props) {
   return (
     <aside className="rounded-xl border bg-card p-5 lg:sticky lg:top-6">
       <h3 className="font-heading text-lg font-semibold">Vaše rezervace</h3>
@@ -18,7 +18,7 @@ export function BookingSummary({ service, date, slot, error }: Props) {
       <dl className="mt-4 grid gap-3 text-sm">
         <SummaryRow label="Služba" value={service?.name} />
         <SummaryRow label="Den" value={date && formatDay(date)} />
-        <SummaryRow label="Čas" value={slot?.time} />
+        <SummaryRow label="Čas" value={time} />
         <SummaryRow
           label="Délka"
           value={service && `${service.durationMinutes} min`}
@@ -29,7 +29,7 @@ export function BookingSummary({ service, date, slot, error }: Props) {
         type="submit"
         size="lg"
         className="mt-5 h-11 w-full text-base"
-        disabled={!slot}
+        disabled={!time}
       >
         Potvrdit rezervaci
       </Button>

@@ -16,7 +16,6 @@ import {
   type Customer,
   type Mechanic,
   type Service,
-  type Slot,
 } from "@/lib/api"
 import { toDayString } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -36,8 +35,8 @@ const EMPTY_CUSTOMER: Customer = { name: "", phone: "", licensePlate: "" }
 export function BookingForm({ services, mechanics }: Props) {
   const [service, setService] = useState<Service>()
   const [date, setDate] = useState<Date>()
-  const [slots, setSlots] = useState<Slot[]>([])
-  const [slot, setSlot] = useState<Slot>()
+  const [times, setTimes] = useState<string[]>([])
+  const [time, setTime] = useState<string>()
   const [customer, setCustomer] = useState(EMPTY_CUSTOMER)
   const [booking, setBooking] = useState<Booking>()
   const [error, setError] = useState("")
@@ -45,30 +44,29 @@ export function BookingForm({ services, mechanics }: Props) {
   const day = date && toDayString(date)
 
   useEffect(() => {
-    if (service && day) api.slots(service.id, day).then(setSlots)
+    if (service && day) api.times(service.id, day).then(setTimes)
   }, [service, day])
 
   function chooseService(service: Service) {
     setService(service)
-    setSlot(undefined)
+    setTime(undefined)
   }
 
   function chooseDate(date?: Date) {
     setDate(date)
-    setSlot(undefined)
+    setTime(undefined)
   }
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    if (!service || !day || !slot) return
+    if (!service || !day || !time) return
 
     setError("")
     try {
       const created = await api.createBooking({
         serviceId: service.id,
-        mechanicId: slot.mechanicId,
         day,
-        time: slot.time,
+        time,
         customer,
       })
       setBooking(created)
@@ -122,14 +120,14 @@ export function BookingForm({ services, mechanics }: Props) {
             />
           </Section>
 
-          <Section step={2} title="Termín" done={Boolean(slot)}>
+          <Section step={2} title="Termín" done={Boolean(time)}>
             <TimePicker
               hasService={Boolean(service)}
               date={date}
               onDateChange={chooseDate}
-              slots={slots}
-              selected={slot}
-              onSelect={setSlot}
+              times={times}
+              selected={time}
+              onSelect={setTime}
             />
           </Section>
 
@@ -166,7 +164,7 @@ export function BookingForm({ services, mechanics }: Props) {
         <BookingSummary
           service={service}
           date={date}
-          slot={slot}
+          time={time}
           error={error}
         />
       </form>

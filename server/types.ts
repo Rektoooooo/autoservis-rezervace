@@ -8,18 +8,13 @@ export type Service = {
 export type Mechanic = {
   id: string
   name: string
+  serviceId: string // each mechanic does one kind of service
 }
 
 export type Customer = {
   name: string
   phone: string
   licensePlate: string
-}
-
-/** A start time that is still free on a given day, e.g. "10:00". */
-export type Slot = {
-  time: string
-  mechanicId: string
 }
 
 export type Booking = {
@@ -33,7 +28,6 @@ export type Booking = {
 
 export type BookingRequest = {
   serviceId: string
-  mechanicId: string
   day: string // "2026-11-16"
   time: string // "10:00"
   customer: Customer

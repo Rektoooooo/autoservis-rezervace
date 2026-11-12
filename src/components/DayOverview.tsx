@@ -68,7 +68,12 @@ export function DayOverview({ services, mechanics }: Props) {
             )
             return (
               <div key={mechanic.id} className="grid content-start gap-2">
-                <h3 className="font-medium">{mechanic.name}</h3>
+                <div>
+                  <h3 className="font-medium">{mechanic.name}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {serviceName(mechanic.serviceId)}
+                  </p>
+                </div>
                 {own.length === 0 && (
                   <p className="text-sm text-muted-foreground">Volno</p>
                 )}
@@ -80,7 +85,6 @@ export function DayOverview({ services, mechanics }: Props) {
                     <p className="font-medium">
                       {formatTime(booking.start)}–{formatTime(booking.end)}
                     </p>
-                    <p>{serviceName(booking.serviceId)}</p>
                     <p className="text-muted-foreground">
                       {booking.customer.name} · {booking.customer.licensePlate}
                     </p>
