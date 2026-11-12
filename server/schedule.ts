@@ -20,7 +20,7 @@ export function getFreeTimes(
 
   for (
     let minutes = OPENS_AT;
-    minutes + service.durationMinutes < CLOSES_AT;
+    minutes + service.durationMinutes <= CLOSES_AT;
     minutes += service.durationMinutes
   ) {
     const time = minutesToTime(minutes)

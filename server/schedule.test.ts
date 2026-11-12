@@ -8,6 +8,7 @@ import type { Booking } from "./types"
 const MONDAY = "2026-11-16"
 const SATURDAY = "2026-11-21"
 const tyres = SERVICES.find((s) => s.id === "tyres")!
+const inspection = SERVICES.find((s) => s.id === "inspection")!
 
 function booking(mechanicId: string, from: string, to: string): Booking {
   return {
@@ -35,6 +36,11 @@ describe("getFreeTimes", () => {
   it("hides a time when the mechanic is busy", () => {
     const petrBusy = [booking("petr", "10:30", "11:00")]
     expect(times(MONDAY, petrBusy)).not.toContain("10:30")
+  })
+
+  it("offers the last car that finishes exactly at closing time", () => {
+    expect(times(MONDAY).at(-1)).toBe("16:30")
+    expect(getFreeTimes(MONDAY, inspection, []).at(-1)).toBe("16:00")
   })
 
   it("ignores other mechanics' bookings", () => {
