@@ -25,10 +25,6 @@ const times = (day: string, bookings: Booking[] = []) =>
   getFreeTimes(day, tyres, bookings)
 
 describe("getFreeTimes", () => {
-  it("starts at opening time", () => {
-    expect(times(MONDAY)[0]).toBe("08:00")
-  })
-
   it("is closed on weekends", () => {
     expect(times(SATURDAY)).toEqual([])
   })
@@ -41,6 +37,20 @@ describe("getFreeTimes", () => {
   it("offers the last car that finishes exactly at closing time", () => {
     expect(times(MONDAY).at(-1)).toBe("16:30")
     expect(getFreeTimes(MONDAY, inspection, []).at(-1)).toBe("16:00")
+  })
+
+  it("leaves a 10 minute break between cars", () => {
+    // Planned back from 17:00, so the spare time is at the start of the day.
+    expect(times(MONDAY).slice(0, 3)).toEqual(["08:30", "09:10", "09:50"])
+  })
+
+  it("keeps the break next to an older booking", () => {
+    // Booked before the break existed, on the old 30-minute times.
+    const petrBusy = [booking("petr", "11:00", "11:30")]
+    const free = times(MONDAY, petrBusy)
+
+    expect(free).not.toContain("10:30") // would end right as that car arrives
+    expect(free).toContain("11:50")
   })
 
   it("ignores other mechanics' bookings", () => {

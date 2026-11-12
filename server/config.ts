@@ -4,6 +4,9 @@ import type { Mechanic, Service } from "./types"
 export const OPENS_AT = 8 * 60 // 8:00
 export const CLOSES_AT = 17 * 60 // 17:00
 
+// Short break between two cars of the same mechanic.
+export const BREAK_BETWEEN_CARS_MINUTES = 10
+
 export const SERVICES: Service[] = [
   {
     id: "tyres",
