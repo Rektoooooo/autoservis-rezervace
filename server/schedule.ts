@@ -1,6 +1,6 @@
 import { CLOSES_AT, MECHANICS, OPENS_AT } from "./config"
 import { addMinutes, isWorkday, minutesToTime, toDate } from "./time"
-import type { Booking, Mechanic, Service } from "./types"
+import type { Booking, BookingRequest, Mechanic, Service } from "./types"
 
 /** Each mechanic does one kind of service. */
 export function mechanicFor(service: Service): Mechanic {
@@ -31,6 +31,35 @@ export function getFreeTimes(
   }
 
   return times
+}
+
+/**
+ * Saves the booking if the time is still free, otherwise returns undefined.
+ *
+ * The customer picked the time minutes ago, so it is checked again here.
+ * The check and the save run without any `await` in between, so two
+ * requests for the same time cannot both get through.
+ */
+export function addBooking(
+  request: BookingRequest,
+  service: Service,
+  bookings: Booking[]
+): Booking | undefined {
+  const freeTimes = getFreeTimes(request.day, service, bookings)
+  if (!freeTimes.includes(request.time)) return undefined
+
+  const start = toDate(request.day, request.time)
+  const booking: Booking = {
+    id: crypto.randomUUID(),
+    serviceId: service.id,
+    mechanicId: mechanicFor(service).id,
+    start: start.toISOString(),
+    end: addMinutes(start, service.durationMinutes).toISOString(),
+    customer: request.customer,
+  }
+
+  bookings.push(booking)
+  return booking
 }
 
 function isMechanicFree(

@@ -2,8 +2,7 @@ import { serve } from "@hono/node-server"
 import { Hono } from "hono"
 
 import { MECHANICS, SERVICES } from "./config"
-import { getFreeTimes, mechanicFor } from "./schedule"
-import { addMinutes, toDate } from "./time"
+import { addBooking, getFreeTimes } from "./schedule"
 import type { Booking, BookingRequest } from "./types"
 
 // In-memory storage – good enough for a demo, data is lost on restart.
@@ -30,17 +29,9 @@ app.post("/bookings", async (c) => {
   const service = SERVICES.find((s) => s.id === request.serviceId)
   if (!service) return c.json({ error: "Unknown service" }, 400)
 
-  const start = toDate(request.day, request.time)
-  const booking: Booking = {
-    id: crypto.randomUUID(),
-    serviceId: service.id,
-    mechanicId: mechanicFor(service).id,
-    start: start.toISOString(),
-    end: addMinutes(start, service.durationMinutes).toISOString(),
-    customer: request.customer,
-  }
+  const booking = addBooking(request, service, bookings)
+  if (!booking) return c.json({ error: "This time is not available" }, 409)
 
-  bookings.push(booking)
   return c.json(booking, 201)
 })
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { SERVICES } from "./config"
-import { getFreeTimes } from "./schedule"
+import { addBooking, getFreeTimes } from "./schedule"
 import { toDate } from "./time"
 import type { Booking } from "./types"
 
@@ -40,5 +40,21 @@ describe("getFreeTimes", () => {
   it("ignores other mechanics' bookings", () => {
     const janaBusy = [booking("jana", "10:30", "11:30")]
     expect(times(MONDAY, janaBusy)).toContain("10:30")
+  })
+})
+
+describe("addBooking", () => {
+  it("refuses a time that was booked in the meantime", () => {
+    const bookings: Booking[] = []
+    const request = {
+      serviceId: "tyres",
+      day: MONDAY,
+      time: "10:30",
+      customer: { name: "Test", phone: "", licensePlate: "" },
+    }
+
+    expect(addBooking(request, tyres, bookings)).toBeDefined()
+    expect(addBooking(request, tyres, bookings)).toBeUndefined()
+    expect(bookings).toHaveLength(1)
   })
 })
